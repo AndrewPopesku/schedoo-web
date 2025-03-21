@@ -235,19 +235,59 @@ export const fetchSchedule = async (groupId: number, semesterId: number): Promis
         const json = await response.json();
         // Adapt endpoint: if response has nested schedule data, flatten it
         if (json.schedule && Array.isArray(json.schedule)) {
+          // Define types for the response structure to avoid using 'any'
+          interface GroupSchedule {
+            days: {
+              day: string;
+              classes: {
+                weeks: {
+                  even?: {
+                    subjectForSite: string;
+                    teacher: {
+                      surname: string;
+                      name: string;
+                      patronymic?: string;
+                    };
+                    lessonType: string;
+                    room: {
+                      name: string;
+                    };
+                  };
+                  odd?: {
+                    subjectForSite: string;
+                    teacher: {
+                      surname: string;
+                      name: string;
+                      patronymic?: string;
+                    };
+                    lessonType: string;
+                    room: {
+                      name: string;
+                    };
+                  };
+                };
+                class: {
+                  id: number;
+                  startTime: string;
+                  endTime: string;
+                  class_name: string;
+                };
+              }[];
+            }[];
+          }
           const flatSchedule: ScheduleItem[] = [];
-          json.schedule.forEach((groupSchedule: any) => {
-            groupSchedule.days.forEach((dayEntry: any) => {
+          (json.schedule as GroupSchedule[]).forEach((groupSchedule: GroupSchedule) => {
+            groupSchedule.days.forEach(dayEntry => {
               const day: string = dayEntry.day;
-              dayEntry.classes.forEach((classEntry: any) => {
-                ['even', 'odd'].forEach((weekKey) => {
+              dayEntry.classes.forEach(classEntry => {
+                (['even', 'odd'] as const).forEach((weekKey) => {
                   const weekData = classEntry.weeks[weekKey];
                   if (weekData) {
                     flatSchedule.push({
                       id: Number(`${classEntry.class.id}${weekKey === 'even' ? '0' : '1'}`), // composite id
                       subject: weekData.subjectForSite,
                       professor: `${weekData.teacher.surname} ${weekData.teacher.name} ${weekData.teacher.patronymic ?? ''}`.trim(),
-                      type: weekData.lessonType.toLowerCase(), // map to lower-case type
+                      type: weekData.lessonType.toLowerCase() as "lecture" | "laboratory" | "practical" | "exam",
                       classroom: weekData.room.name,
                       timeStart: classEntry.class.startTime,
                       timeEnd: classEntry.class.endTime,
