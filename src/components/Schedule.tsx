@@ -8,9 +8,9 @@ import {
   fetchSemesters,
   getCurrentSemester,
   getActiveSemesterGroups,
-  Semester,
-  SemesterGroup
 } from "@/services/apiService";
+import { Semester, SemesterGroup } from "@/lib/types";
+
 
 export default function Schedule() {
   const [weekType, setWeekType] = useState<"ODD" | "EVEN">("EVEN");
