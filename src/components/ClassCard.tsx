@@ -1,21 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-
-interface TimeSlot {
-  start: string;
-  end: string;
-}
-
-interface ClassInfo {
-  subject: string;
-  professor: string;
-  type: "lecture" | "laboratory" | "practical" | "exam";
-  room: string;
-  online: boolean;
-  timeSlot: TimeSlot;
-  day: string;
-}
+import { ClassInfo } from "@/lib/types";
 
 export default function ClassCard({ classInfo }: { classInfo: ClassInfo }) {
   // Get the appropriate tag class based on class type

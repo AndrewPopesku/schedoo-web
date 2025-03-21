@@ -5,9 +5,9 @@ import ClassCard from "@/components/ClassCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   fetchSchedule,
-  dayNameMap,
-  SemesterClass
+  dayNameMap
 } from "@/services/apiService";
+import { SemesterClass } from "@/lib/types";
 
 // Types for ScheduleGrid props
 interface ScheduleGridProps {
